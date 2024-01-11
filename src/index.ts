@@ -30,6 +30,10 @@ const customErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
       return next(err)
     }
     return res.status(500).send()
-  }
+}
+
+app.listen(port, () => {
+  console.log(`Care Chatbot app listening at http://localhost:${port}`)
+})
 
 app.use(customErrorHandler)

@@ -21,6 +21,8 @@ app.post(
     '/webhook',
     asyncHandler(async (req, res) => {
         const answer = await webhook(req.body)
+        console.log("Webhook answer")
+        console.log(answer)
         res.json(answer)
     })
 )

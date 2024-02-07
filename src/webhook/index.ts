@@ -6,6 +6,11 @@ export default async (params: protos.google.cloud.dialogflow.cx.v3.WebhookReques
     const { fulfillmentInfo, sessionInfo } = params
     const { tag } = fulfillmentInfo || {}
     const { parameters } = sessionInfo || {}
+    const availableSlots = [
+        '10:00',
+        '11:00',
+        '12:00'
+    ]
 
     console.log("Webhook incoming request")
     console.log(params)
@@ -72,6 +77,25 @@ export default async (params: protos.google.cloud.dialogflow.cx.v3.WebhookReques
                         }
                     ]
                 }
+            }
+        }
+    } else if (tag === 'verify-disponibilities') {
+        return {
+            sessionInfo: {
+                parameters: {
+                    availableSlots
+                }
+            },
+            fulfillmentResponse: {
+                messages: [
+                    {
+                        text: {
+                            text: [
+                                'Les créneaux disponibles sont: 10:00, 11:00, 12:00'
+                            ]
+                        }
+                    }
+                ]
             }
         }
     }

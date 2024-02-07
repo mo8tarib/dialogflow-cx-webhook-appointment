@@ -1,6 +1,7 @@
 import protos from '@google-cloud/dialogflow-cx/build/protos/protos'
 import checkAvailabilities from './check-availabilities'
 import checkSelectedTime from './check-selected-time'
+import moment from 'moment'
 
 export default async (params: protos.google.cloud.dialogflow.cx.v3.WebhookRequest | any) : Promise<protos.google.cloud.dialogflow.cx.v3.WebhookResponse | any> => {
     const { fulfillmentInfo, sessionInfo } = params
@@ -55,7 +56,7 @@ export default async (params: protos.google.cloud.dialogflow.cx.v3.WebhookReques
                 sessionInfo: {
                     parameters: {
                         useridexist: true,
-                        username: "Jean Marc Geoffroy"
+                        username: "Jean Marc G"
                     },
                 }
             }
@@ -98,6 +99,51 @@ export default async (params: protos.google.cloud.dialogflow.cx.v3.WebhookReques
                 ]
             }
         }
+    } else if (tag === 'verify-selected-time') {
+        const { hours, minutes } = parameters?.time
+        const formattedTime = moment(`${hours}:${minutes}`, 'HH:mm').format('HH:mm')
+        if (availableSlots.includes(formattedTime)) {
+            // ajouter une confirmation dans la BD
+            return {
+                sessionInfo: {
+                    parameters: {
+                        selectedTime: true
+                    }
+                },
+                fulfillmentResponse: {
+                    messages: [
+                        {
+                            text: {
+                                text: [
+                                    `Le créneau ${formattedTime} est reservé avec succès`
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        } else {
+            return {
+                sessionInfo: {
+                    parameters: {
+                        time: null,
+                        selectedTime: false
+                    }
+                },
+                fulfillmentResponse: {
+                    messages: [
+                        {
+                            text: {
+                                text: [
+                                    `Le créneau ${formattedTime} n'est pas disponible`
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
     }
 
 
